@@ -46,7 +46,9 @@ Univariate Exponential Families that Permit Positive Dependencies, by David Inou
  %% \end{abstract}
 \section{Introduction} 
 
-Understanding relationships between different categorical or quantitative random variables is a central problem in clustering, network reconstruction, and regression.  This paper proposes a multivariate distributions whose natural parameter spaces enable encapsulation of positive conditional dependencies between Poisson random variables.  This is enabled by the speed of the asymptotic decrease of the base measure of the Poisson distribution.  The proposed distribution is also able to encapsulate certain previously described multivariate distributions.
+Understanding relationships between different categorical or quantitative random variables is a central problem in clustering, network reconstruction, and regression.  This paper proposes a multivariate distributions whose natural parameter spaces enable encapsulation of positive conditional dependencies between Poisson random variables.  This is enabled by the speed of the asymptotic decrease of the base measure of the Poisson distribution.  
+\vmcomment{This sentence has so many undefined terms that it is incomprehensible.}
+The proposed distribution is also able to encapsulate certain previously described multivariate distributions.
 
 \subsection{Exponential Families}
 
@@ -54,54 +56,78 @@ The univariate exponential family of distributions includes many of the most com
   \[P(x|\theta) = \exp(\eta(\theta)^T T(x) + B(x) - A(\theta)),\]
   where $\eta(\theta)$ are the natural parameters of the exponential family, $T(x)$ is a set of fixed size containing data dependent sufficient statistics, $B(x)$ is the base measure of the distribution, and 
   \[A(\theta) = \log \int_{-\infty}^{\infty} \eta(\theta)^T T(x) + B(x) dx\]
-  is the normalizing constant of the distribution.  These distributions both encapsulate diverse behavior and have a number of useful properties.  For example, they have sufficient statistics of fixed size which fully summarize data, often appear in physical and information theoretic systems, and arise as unique maximum entropy distributions given constraints on moments.  For these reasons and many others, an exponential family distribution is often chosen to model univariate data.
+  is the normalizing constant of the distribution.  
+ \vmcomment{1) $\theta$ is not defined; 2) all vectors and matrices should be bolded.}
+ These distributions both encapsulate diverse behavior and have a number of useful properties.  For example, they have sufficient statistics of fixed size which fully summarize data, often appear in physical and information theoretic systems, and arise as unique maximum entropy distributions given constraints on moments.  For these reasons and many others, an exponential family distribution is often chosen to model univariate data. 
+\vmcomment{Include references for the above facts.}
   
  \subsection{Graphical Models}
  
 Graphical models provide a general framework for constructing multivariate probability distributions.  A graph $G$ is composed of $p$ sites and $e$ edges which link pairs of sites.  The Hammersley-Clifford Theorem states that we can construct a multivariate probability measure that satisfies the Markov independence property encoded by $G$ if and only if its density factorizes as
  %%\[\mathbb{P}(x) = \frac{1}{Z(\theta)} \prod_{c \in \mathcal{C}}\phi_c(x) \qquad \phi_c:\mathbb{S}|_c \to \mathbb{R} \]
- \[\mathbb{P}(x) = \frac{1}{Z(\theta)} \prod_{c \in \mathcal{C}}\phi_c(x) \]
- where $\mathcal{C}$ are the cliques of the graph, i.e. simplicial combinations of non-zero conditional probability dependencies and $\phi_c$ are statistics which summarize the distribution of the data on sites in the clique.  Since we often understand what univariate exponential family distribution with which to model a particular parameter, the calculation of compatibility functions from univariate node-conditional exponential family distributions is therefore the crucial issue when constructing multivariate distributions over a graph. \vmcomment{include proper citations in this paragraph.}
+ \[
+ \mathbb{P}(x) = \frac{1}{Z(\theta)} \prod_{c \in \mathcal{C}}\phi_c(x)\vmadd{,} 
+ \]
+ where $\mathcal{C}$ are the cliques of the graph, i.e. simplicial combinations of non-zero conditional probability dependencies and $\phi_c$ are statistics which summarize the distribution of the data on sites in the clique.  
+ Since we often understand what univariate exponential family distribution with which to model a particular parameter, the calculation of compatibility functions 
+ \vmcomment{What is a compatibility function?; you need more clarity in this paragraph --- I do not see an explicit connection with exponential families here or motivation for this connection.}
+ from univariate node-conditional exponential family distributions is therefore the crucial issue when constructing multivariate distributions over a graph. \vmcomment{include proper citations in this paragraph.}
 
   
  
 \subsection{Normalizability}
 
 \subsection{Previous Work}
-This approach in fact has its root in node-wise regression methods for learning these models  (Meinshausen
+This approach \vmcomment{what approach?} in fact has its root in node-wise regression methods for learning these models  (Meinshausen
 and B?uhlmann, 2006; Ravikumar et al., 2010; Jalali et al., 2011), in which for each site $s$ in a graph $G{p,e}$ with $p$ vertices, the interaction terms \vmcomment{``interaction terms" are not defined yet} $\Phi_{-s} \in \mathbb{R}^{p-1}$ are learned through the regression $X_s = X_{-s} \Phi_{-s}$\vmadd{,} where $X_s \in \mathbb{R}^n$.  \vmcomment{Try to avoid math in the intro} Since we often assume sparsity in our edge set, it can be desirable to limit the number of edges through use of either a information theoretic method like BIC, or a penalization.  Previous work has focused on learning these models in the multivariate Gaussian, multivariate Ising, and discrete settings, as well as mixed settings in which certain variables are Gaussian and others are Ising \citep{Friedman2008-oq, LauWer89, Bento2011-vw}.   Other attempts to create a multivariate Poisson distribution have been unsuccessful for alternate reasons such computational complexity, restrictions to positive-interactions, or unnatural transforms applied to sufficient statistics (Inouye 2013, 11-16).
 
 \section{Methods}
 
-In this section, I describe the SRGM distribution, its normalizability, and its implementation through convex model fitting and stochastic integration of the normalizing constant.  The general set up used throughout the rest of the paper is as follows: given data $\mathbb{X}$ composed of a set of $n$ i.i.d. observations of $p$ parameters.  Vectors $\bm{x}$ in bold refer to single observations of all parameters, and are assumed to be i.i.d.
+In this section, I describe the SRGM \vmcomment{this abbreviation is not defined yet} distribution, its normalizability, and its implementation through convex model fitting and stochastic integration of the normalizing constant.  The general set up used throughout the rest of the paper is as follows: given data $\mathbb{X}$ composed of a set of $n$ i.i.d. observations of $p$ parameters.  Vectors $\bm{x}$ in bold refer to single observations of all parameters, and are assumed to be i.i.d. \vmcomment{I am confused: how can one observe parameters? Are you talking about components of each $\mathbf{x}$?}
 
 \subsection{Background}
 
-Since we often understand what univariate exponential family distribution with which to model a particular parameter, we assume that node-conditional distributions are from a univariate exponential family whose natural parameters are a linear combination of k-th order interaction terms as follows: 
-\[P(x_s \vert x_{-s}, \Theta_{\mathcal{C}_s}) = \exp{ ( \sum_{c \in \mathcal{C}_s} (\theta_c \prod_{i \in c} T(x_i) ) + B(x_s) - A(\Theta_{\mathcal{C}_s} )) }    \]
+Since we often understand what univariate exponential family distribution with which to model a particular parameter, we assume that node-conditional \vmcomment{node-conditional is not defined} distributions are from a univariate exponential family whose natural parameters are a linear combination of k-th order interaction terms as follows: 
+\[
+P(x_s \vert x_{-s}, \Theta_{\mathcal{C}_s}) = \exp{ \left( \sum_{c \in \mathcal{C}_s} \left(\theta_c \prod_{i \in c} T(x_i) \right) + B(x_s) - A(\Theta_{\mathcal{C}_s} )\right) }\vmadd{,}    
+\]
  where $\mathcal{C}_s$ is the set of cliques containing site $s$ and $\Theta_{\mathcal{C}_s}$ is the set of clique parameters $\theta_c$ for site $s$.  We can see that this is a univariate exponential family whose natural parameter depends on conditional dependencies by factoring $T(x_s)$ out of the product term.  By the Hammersley-Clifford Theorem, these conditionals specify the unique joint distribution
  \[P(\bm{x} \vert \Theta) = \exp{ (\sum_{s} ( \sum_{c \in \mathcal{C}_s} (\theta_c \prod_{i \in c} T(x_i) ) + B(x_s)) - A(\Theta ))} . \]
+ \vmcomment{Isn't this backward? Full conditionals do not necessarily specify a joint. That's why H-C theorem says you should start with cliques.}
+ 
  Restricting to clique sizes of at most two, we arrive at the general multivariate exponential family model proposed by Yang (2012) \skcomment{Yang claimed that this was the unique joint distribution for node-conditional exponential families, but this is obviously not the case, since the power of the interaction terms has been changed in the SRGM}
- \[P(\bm{x} \vert \Theta^1,\Theta^2) = \exp(\Theta^{1T} T(x) + T(x)^T\Theta^{2}  T(x) + \sum_{s=1}^p B(x_s) - A(\Theta))\]
- where $\Theta^1$ and $\Theta^2$ represent clique-specific parameters of orders $1$ and $2$ respectively in the case that $\Theta^2$ is all zeroes. Note that this form encapsulates the multivariate normal distribution through the parameterizations $\Theta^1 = \Sigma^{-1} \mu$ and $\Theta^2 = -\frac{1}{2}\Sigma^{-1}$ \skcomment{in this case, theta2 will not have all zero diagonals... this is a minor contradiction with the paper}, as well as independent Poisson and exponential distributions when $\Theta^{2} = 0$.
+ \vmcomment{But you can re-define a vector of sufficient statistics by including powers as ``new Ts''}
+ \[P(\bm{x} \vert \Theta^1,\Theta^2) = \exp(\Theta^{1T} T(x) + T(x)^T\Theta^{2}  T(x) + \sum_{s=1}^p B(x_s) - A(\Theta))\vmadd{,}
+ \]
+ where $\Theta^1$ and $\Theta^2$ represent clique-specific parameters of orders $1$ and $2$ respectively in the case that $\Theta^2$ is all zeroes. 
+ \vmcomment{The above formula appears out of the blue for me.}
+ Note that this form encapsulates the multivariate normal distribution through the parameterizations $\Theta^1 = \Sigma^{-1} \mu$ and $\Theta^2 = -\frac{1}{2}\Sigma^{-1}$ \skcomment{in this case, theta2 will not have all zero diagonals... this is a minor contradiction with the paper}, as well as independent Poisson and exponential distributions when $\Theta^{2} = 0$.
 
 \subsection{Square Root Graphical Models}
 
-A weakness of the previous model is that the pairwise interaction terms $T(\bm{x})^T \Theta^{2} T(\bm{x})$ are $O(x^2)$ while the self-interaction terms $T(\bm{x})^T \Theta^{1}$ are $O(x)$.  Positive terms in $\Phi$ will \skcomment{again, I am not sure why negative definiteness would not be an acceptable criteria for the Poisson distribution}.  Accordingly, the authors propose the following \textit{Square Root Graphical Model} (SRGM)
+A weakness of the previous model is that the pairwise interaction terms $T(\bm{x})^T \Theta^{2} T(\bm{x})$ are $O(x^2)$ while the self-interaction terms $T(\bm{x})^T \Theta^{1}$ are $O(x)$.  Positive terms in $\Phi$ will \skcomment{again, I am not sure why negative definiteness would not be an acceptable criteria for the Poisson distribution}. 
+\vmcomment{Did you finish your sentence before the comment?}
+ Accordingly, the authors propose the following \textit{Square Root Graphical Model} (SRGM)
 \[P(\bm{x} \vert \Theta, \Phi) =  \exp(\Theta^T \sqrt{T(\bm{x})} + \sqrt{T(\bm{x})}^T\Phi \sqrt{T(\bm{x})} + \sum_{s=1}^p B(x_s) - A(\Theta,\Phi)).\]
 
 Note that the diagonals of $\Phi$ are $\Theta^1$ from the previous parameterization.  
 To recover the multivariate Gaussian, we set entry-wise $T(x) = x^2$ and replace $\sqrt{T(\bm{x})}$ with $\sgn{(\bm{x})}\sqrt{T(\bm{x})}$ in the above expression, and use the same reparameterization as above.  However, the SRGM differs from the previous model in several ways.  
-\[P(x_s \vert x_-s, \Phi, \Theta) = \exp{(\eta_{1s}^{node} \sqrt{x_s} + \eta_{2s}^{node} x_s + B(x_s) - A(\eta_{1s}^{node} , \eta_{2s}^{node} ))} \]
-where $\eta_{1s}^{node} = \Theta_s + 2 \Phi_{-s}\sqrt{x_{-si}}$ and $\eta_{2s}^{node} = \Phi_{ss}$.  For base exponential families which are one-parameter, this reduces to the base family in the case $\eta_{1s} = 0$.  This contrasts with previous constructions.
+\[P(x_s \vert x_-s, \Phi, \Theta) = \exp{(\eta_{1s}^{node} \sqrt{x_s} + \eta_{2s}^{node} x_s + B(x_s) - A(\eta_{1s}^{node} , \eta_{2s}^{node} ))} 
+\]
+where $\eta_{1s}^{node} = \Theta_s + 2 \Phi_{-s}\sqrt{x_{-si}}$ and $\eta_{2s}^{node} = \Phi_{ss}$.  
+\vmcomment{Again, the full conditional appeared from out of nowhere? Motivate it somehow.}
+For base exponential families which are one-parameter, this reduces to the base family in the case $\eta_{1s} = 0$.  This contrasts with previous constructions.
 
 
 
 \subsection{Normalizability of Square Root Graphical Models}
 
 The SRGM has a natural parameter space  
-\[\mathcal{N} = \{ (\Theta,\Phi)  \vert  \int \exp(\Theta^T \sqrt{T(\bm{x})} + \sqrt{T(\bm{x})}^T\Phi \sqrt{T(\bm{x})} + \sum_{s=1}^p B(x_s)) d\mu (x) < \infty \} \]
-which depends on the sufficient statistics and base measures of the conditional probability distributions of the sites which make up the base graph, as well as their individual natural parameter spaces. The inclusion of positive dependencies in the natural parameter space of the SRGM follows from the normalizability of the radial distributions of $\bm{\|\bm{x}\|_1}$ given $v = \frac{x}{\|x\|_1}$, which are the two-parameter exponential families
+\[\mathcal{N} = \left\{ (\Theta,\Phi)  \vert  \int \exp(\Theta^T \sqrt{T(\bm{x})} + \sqrt{T(\bm{x})}^T\Phi \sqrt{T(\bm{x})} + \sum_{s=1}^p B(x_s)) d\mu (x) < \infty \right\}\vmadd{,} 
+\]
+which depends on the sufficient statistics and base measures of the conditional probability distributions of the sites which make up the base graph, as well as their individual natural parameter spaces. The inclusion of positive dependencies in the natural parameter space of the SRGM follows \vmcomment{Why does it follow? This is not obvious?} 
+from the normalizability of the radial distributions
+of $\bm{\|\bm{x}\|_1}$ given $v = \frac{x}{\|x\|_1}$, which are the two-parameter exponential families
  \begin{align*}
 P(\bm{x} = z\bm{v} \vert \bm{v}, \Phi, \Theta) &=  \exp{(\Theta^T \sqrt{T(z \bm{v})} +  \sqrt{T(z \bm{v})} \Phi \sqrt{T(z \bm{v})} + \sum_{s=1}^p B(zv_s))} \\
 &= \exp{( (\Theta^T \sqrt{\bm{v}}) \sqrt{z} +  (\sqrt{\bm{v}^T} \Phi \sqrt{\bm{v}})z  + \sum_{s=1}^p B(zv_s))} \\
@@ -111,16 +137,18 @@ where $\eta_{1}^{rad} = \Theta^T \sqrt{\bm{v}}$,  $\eta_{2}^{rad} = \sqrt{\bm{v}
 Rewriting the joint normalizing constant in terms of the radial distribution, we get
 \begin{align*}
 A(\Phi, \Theta) &= \log \int_\mathcal{D} \exp{(\Theta^T \sqrt{T(\bm{x})} +  \sqrt{T(\bm{x})} \Phi \sqrt{T(\bm{x})} + \sum_{s=1}^p B(x_s))}d\mu (\bm{x}) \\
-			&= \log \int_\mathcal{V} \int_{\mathcal{Z}(\mathcal{V})} \exp{(\Theta^T \sqrt{T(z \bm{v})} +  \sqrt{T(z \bm{v})} \Phi \sqrt{T(z \bm{v})} + \sum_{s=1}^p B(zv_s))} d\mu(z)d\bm{v} 
+			&= \log \int_\mathcal{V} \int_{\mathcal{Z}(\mathcal{V})} \exp{(\Theta^T \sqrt{T(z \bm{v})} +  \sqrt{T(z \bm{v})} \Phi \sqrt{T(z \bm{v})} + \sum_{s=1}^p B(zv_s))} d\mu(z)d\bm{v}\vmadd{,} 
 \end{align*}
 where $\mathcal{D}$ is the domain of the probability measure, $\mathcal{V} =\{\bm{v} \vert \|\bm{v}\|_1 = 1, \bm{v} \in \mathcal{D} \}$, and $\mathcal{Z}(\mathcal{V}) = \{z \in \mathbb{R}_+ \vert z\bm{v} \in \mathcal{D} \}$.
-Since $\mathcal{V}$ is bounded, we need to show only that the interior integral is finite, i.e.
+Since $\mathcal{V}$ is bounded, we need to show \vmcomment{I am not even sure what you are trying to show? Connection to the radial distribution? Finiteness of the normalizing constant? Both?} only that the interior integral is finite, i.e.
 \[A^{rad} (\eta_1, \eta_2) = \int \exp{(\eta_{1}^{rad} \sqrt{z} + \eta_{2}^{rad} z + \sum_{s=1}^p B(x_s))} d\mu(z) < \infty, \]
 which is the case if $\eta_2 < 0$ or $\eta_2 = 0$, and $\eta_1 \leq 0$.  This condition, which is automatically satisfied if $\Phi$ is negative definite, may be relaxed for the Poisson distribution because of the rapid asymptotic decrease of its base measure $B_{pois}(x) = \log \frac{1}{x!}$.  \skcomment{I am unclear why positive or negative definiteness of Phi was not sufficient in the previous class of pairwise exponential family MRFs detailed by Yang in "Graphical Models via Univariate
 Exponential Family Distributions"}
 
 \subsection{Selection of Model Parameters}
-Given data $\mathbb{X}$ containing $n$ observations of $p$ parameters, the authors seek to estimate the model parameters $\Phi \in \mathbb{R}^{p\times p}$ and $\Theta \in \mathbb{R}^p$  that maximize the joint likelihood 
+Given data $\mathbb{X}$ containing $n$ observations of $p$ parameters
+\vmcomment{Again, I don't think you mean parameters here.}
+, the authors seek to estimate the model parameters $\Phi \in \mathbb{R}^{p\times p}$ and $\Theta \in \mathbb{R}^p$  that maximize the joint likelihood 
  \[L(\Theta,\Phi | \mathbb{X}) = \prod_{i=1}^{n} \exp(\Theta^T\sqrt{T(x)} + \sqrt{T(x)}^T\Phi \sqrt{T(x)} - A(\Theta,\Phi)).\]
 As a computationally tractable substitute for maximizing this joint likelihood, they minimize the sum of the penalized node conditional negative log likelihood joint objective functions, which is
  \[O(\eta_1 , \eta_2 | \mathbb{X}) = \sum_{s = 1}^{p} (-\frac{1}{n} \sum_{i = n}^n (\eta_{1si} \sqrt{x_{si}} + \eta_{2si} x_{si} - A_{node} ( \eta_{1si}, \eta_{2si} )) + \lambda\| \Phi_{-s} \|_1).\]
@@ -128,11 +156,12 @@ Here, $\eta_{1si} = \Theta_s + 2 \Phi_{-s}\sqrt{x_{-si}}$ and $\eta_{2si} = \Phi
 \begin{align*}
 \frac{dO}{d\phi_{ss}} &= \frac{-1}{n} \sum_{i=1}^{n} x_{si} - \frac{dA_{node}}{d\eta_2}, \\
 \frac{dO}{d\phi_{-s}} &= \frac{-2}{n} \sqrt{\mathbb{X}_{-s}}^T \sqrt{\mathbb{X}_s} - 2 \sqrt{\mathbb{X}_{-s}} \frac{dA_{node}}{d\eta_1}\, \quad \text{and}  \\
-\frac{dO}{d\theta_{s}} &= \frac{-1}{n} \sum_{i=1}^{n} \sqrt{x_{si}} - \frac{dA_{node}}{d\eta_1}.
+\frac{dO}{d\theta_{s}} &= \frac{-1}{n} \sum_{i=1}^{n} \sqrt{x_{si}} - \frac{dA_{node}}{d\eta_1}\vmdel{.}\vmadd{,}
 \end{align*}
 as well as approximating the gradients $\frac{dA_{node}}{d\eta1}$ = $\frac{(A_{node}((\eta_1 + \epsilon), \eta_2) - A_{node}((\eta_1 , \eta_2)))}{\epsilon} $ using $\epsilon = 0.0001$, and $\frac{dA_{node}}{d\eta_2}$ similarly.  While $A_{node}$ was approximated in the Arxiv paper through Gaussian quadrature, the authors have now computed an analytic solution
-\[A_{node} = \sqrt{\pi}  \eta_1 \exp{ ( \frac{\eta_1^2}{-4\eta_2} ) } / (2(-\eta_2)^{1.5}) (1 - \erf{(\frac{-\eta_1}{2 \sqrt{ -\eta_2}}}))  + \frac{1}{-\eta_2}\].
-The optimization algorithm then proceeds via line-search and soft-thresholding.
+\[A_{node} = \sqrt{\pi}  \eta_1 \exp{ ( \frac{\eta_1^2}{-4\eta_2} ) } / (2(-\eta_2)^{1.5}) (1 - \erf{(\frac{-\eta_1}{2 \sqrt{ -\eta_2}}}))  + \frac{1}{-\eta_2}.\]
+The optimization algorithm then proceeds via line-search and soft-thresholding. 
+\vmcomment{Too brief, line-search over what?; thresholding what?}
 
 
 \subsection{Estimation of Normalization Constant}
@@ -149,6 +178,7 @@ Given model parameters $\Theta$ and $\Phi$, we use Annealed Importance Sampling 
 For each particle path $x = \{x_n, \dotsc x_0\}$, we compute the weight $w(x) = \prod_{i=1}^n \frac{f_{i-1}(x_{i-1})}{f_{i}(x_{i-1})}$.  The average of the sample weights converges to the ratio of the normalizing constants of $P_0$ and $P_n$.  This procedure is essentially a repeated application of importance sampling using MCMC to sample from intermediate distributions.
 	In our case, 2000 independent particles are simulated from a $P_0$ which is an independent exponential family with parameters determined by the current iterate.  We create $n=200$ intermediate distributions $P_i = P(\Phi_{diag} + \frac{n-i}{n} (\Phi - \Phi_{diag}), \frac{n-i}{n}{\Theta} $, and make each $T_{j}$ a sequence of $20$ Metropolis-Hastings steps.  
 	
+\vmcomment{Annealed Importance Sampling needs to be rewritten. Start from the very beginning and explain clearly. If you are switching to more general notation, then state and define ``target", its normalizing constant. Explain what do you mean by ``interpolating", etc.}	
 	
  \section{Results} 
  \section{Discussion}
