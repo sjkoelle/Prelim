@@ -50,19 +50,23 @@ Univariate Exponential Families that Permit Positive Dependencies, by David Inou
     Department of Statistics, University of Washington Seattle, WA, 98195, USA  
      } 
   \end{center}
-%%\begin{abstract} 
- %% \end{abstract}
-\section{Abstract}
+  
+\begin{abstract} 
+ 
+%\section{Abstract}
 
 Understanding relationships between different categorical or quantitative random variables is a central problem in clustering, network reconstruction, and regression.  This paper proposes a multivariate distribution based on a Markov Random Field which encapsulates multivariate Gaussian and Ising graphical models.  The parameter space is expanded using a square root transformation of sufficient statistics to enable new multivariate dependencies.
+\end{abstract}
 
 \section{Introduction} 
 
 Discovery of positive and negative tendencies to co-occur between empirical random variables is an important motivation for fitting multivariate distributions to data.  For this reason, Markov Random Fields (MRFs), which specify conditional dependencies between random variables, are often used to model multivariate data.  The commonly used multivariate Gaussian and Ising distributions are examples of Markov Random Fields, and the learning of MRF model structures, particularly when the number of variables is high, is an active area of research.
 
-Despite the numerous established tools for fitting multivariate Gaussian distributions, alternative multivariate distributions are somewhat lacking.  In practice, data is often transformed to be Gaussian, and methods developed for multivariate Gaussians are often applied to data which is not Gaussian.  This can be problematic.  For example, exponential and Poisson random variables have different asymptotic tail behavior than Gaussians.  This discrepancy can harm model optimization given rare events.  A somewhat related option is the use of a Gaussian copula, in which latent variables leading to non-Gaussian observables are themselves assumed to be distributed multivariate Gaussian.  However, the imposition of a copula structure may be unfounded, and copulas also require more data to optimize than methods in which Gaussian and non-Gaussian distributions don't have to simultaneously inferred.  Non-parametric methods also increase the quantity of data required for a given power of inference.  The impetus to Gaussianize is also driven by insufficiencies of the multivariate exponential and Poisson distributions.   The multivariate exponential distribution has a singular region with high probability mass, and the multivariate Poisson distribution can only model random variables with a positive tendency to co-occur.  Even the underlying assumption of these models, that the presence of a latent univariate Poisson or exponential random variables corresponds to dependencies between pairs of observed variables, is not always applicable. 
+Despite the numerous established tools for fitting multivariate Gaussian distributions, alternative multivariate distributions are somewhat lacking.  In practice, data is often transformed to be Gaussian, and methods developed for multivariate Gaussians are often applied to data which is not Gaussian.  This can be problematic.  For example, exponential and Poisson random variables have different asymptotic tail behavior than Gaussians.  This discrepancy can harm model optimization given rare events.  A somewhat related option is the use of a Gaussian copula, in which latent variables leading to non-Gaussian observables are themselves assumed to be distributed \vmadd{as} multivariate Gaussian.  However, the imposition of a copula structure may be unfounded, and copulas also require more data to optimize than methods in which Gaussian and non-Gaussian distributions don't have to simultaneously inferred.  Non-parametric methods also increase the quantity of data required for a given power of inference.  The impetus to Gaussianize is also driven by insufficiencies of the multivariate exponential and Poisson distributions.   The multivariate exponential distribution has a singular region with high probability mass, and the multivariate Poisson distribution can only model random variables with a positive tendency to co-occur.  Even the underlying assumption of these models, that the presence of a latent univariate Poisson or exponential random variables corresponds to dependencies between pairs of observed variables, is not always applicable. 
 
-The alternative approach of this paper is that the parameters of univariate distributions are functions of effector variables.  The question that it tries to answer is what form are these functions allowed to take, in order that the joint distribution of effectors and effectees is a Markov Random Field?  The \textit{Square Root Graphical Model} (SRM) results from the relaxation of a previous assumption that conditional distributions are from a specified univariate exponential family distribution, which we call the base family.  We still insist that all univariate conditionals have tail behavior and domain from the base family, and that independent random variables have the option of being from this base family.  Taking square roots of univariate sufficient statistics ensures the the terms with the largest asymptotic growth in the joint distribution are of the same order as the terms with the largest growth in the base exponential family.  Using this fact, multivariate tail behavior is shown to be normalizable under weak conditions.  In contrast with a previous MRF model, positive dependencies between both Poisson and exponential random variables do not interfere with normalization. This is illustrated by fitting an SRM on a dataset of airport delay times using standard methods.  The normalizing constant is approximated to allow model comparison.
+The alternative approach of this paper is that the parameters of univariate distributions are functions of effector variables.  The question that it tries to answer is what form are these functions allowed to take, in order that the joint distribution of effectors and effectees is a Markov Random Field?  The \textit{Square Root Graphical Model} (SRM) results from the relaxation of a previous assumption that conditional distributions are from a specified univariate exponential family distribution, which we call the base family.  We still insist that all univariate conditionals have tail behavior and domain from the base family, and that independent random variables have the option of being from this base family.  Taking square roots of univariate sufficient statistics ensures the the terms with the largest asymptotic growth in the joint distribution are of the same order as the terms with the largest growth in the base exponential family.  Using this fact, multivariate tail behavior is shown to be normalizable under weak conditions.  In contrast with a previous MRF model, positive dependencies between both Poisson and exponential random variables do not interfere with normalization. This is illustrated by fitting an SRM on a dataset of airport delay times using standard methods.  The normalizing constant is approximated to allow \vmadd{for} model comparison.
+
+\vmcomment{I hope that when you add references, the story of what has been done in the past will become more clear. Also, would be nice to have examples of MRF usage to solve concrete problems.}
 
 \section{Methods}
 
@@ -70,14 +74,14 @@ In this section, I describe the derivation of the SRM distribution, the properti
 
  \subsection{Graphical Models}
  
-A graph $\bm{G}$ consists of a set of nodes or vertices $\bm{V} = \{V_1, \dotsc , V_p \}$ and a set of edges $\bm{E}$ which link the nodes in a pairwise manner.  Self-edges are allowed.  Given a multivariate vector of univariate random variables $\bm{x}$ which takes values in a domain $\mathcal{D}$ and is bijected with $V$, define a Markov Random Field probability measure $P(\bm{x})$ as satisfying the following properties.
+A graph $\bm{G}$ consists of a set of nodes or vertices $\bm{V} = \{V_1, \dotsc , V_p \}$ and a set of edges $\bm{E}$ which link the nodes in a pairwise manner.  Self-edges are allowed.  Given a multivariate vector of univariate random variables $\bm{x}$ which takes values in a domain $\mathcal{D}$ and is bijected with $V$ \vmcomment{Not sure I know what it means ``to be bijected with something''}, define a Markov Random Field probability measure $P(\bm{x})$ as satisfying the following properties.
 \begin{enumerate}
 \item $P(\bm{x}) > 0 \; \forall \bm{x} \in \mathcal{D}$
 \item $P(x_s \vert \bm{x}_{-s}) = P(x_s \vert \bm{x}_{-s,-t})$ implies $e_{st} \not\in E$, where $\bm{x}_{-s,-t}$ is the multivariate random vector $\bm{x}$ with the s-th and t-th entries removed and $e_{st}$ is an edge linking the nodes corresponding to $x_s$ and $x_t$.
 \item $P(x_s \vert \bm{x}_{-s}) = P(x_s \vert \bm{N}(x_s))$, where $ \bm{N}(x_s)$ denotes the set of univariate random variables whose corresponding nodes are connected to the node of $x_s$ via an edge. 
 \item $P(\bm{x}_A \vert \bm{x}_{B \cap C}) = P(\bm{x}_A \vert \bm{x}_C)$, where $A$, $B$, and $C$ are non-intersecting sets of nodes, and every path from $A$ to $B$ in $\bm{E}$ passes through $C$.
 \end{enumerate}
-MRFs are flexible.  Nodes may correspond to either latent factors or observables, and edges may be of quantitatively different strengths, though they are also binary in the Markov sense.  While the above conditions make no restriction on the minimality of the edge set $\bm{E}$, they also enable removal of edges between variables which are independent conditionally on interpolating paths in the graph.  Since it is not always obvious which conditional probability dependencies are spurious given others, and since non-spurious edges are potentially indicative of interesting causal links or latent factors, we will optimize our MRF using a penalty in \ref{optimization}
+MRFs are flexible.  Nodes may correspond to either latent factors or observables, and edges may be of quantitatively different strengths, though they are also binary in the Markov sense \vmcomment{Edges are just binary, there is no need for ``Markov sense''.}.  While the above conditions make no restriction on the minimality of the edge set $\bm{E}$, they also enable removal of edges between variables which are independent conditionally on interpolating paths in the graph.  Since it is not always obvious which conditional probability dependencies are spurious given others, and since non-spurious edges are potentially indicative of interesting causal links or latent factors, we will optimize our MRF using a penalty in \ref{optimization}
 
 The Hammersley-Clifford Theorem implies that the density of a multivariate probability measure of a Markov Random Field such as the one described in the previous paragraph factors as
  \[P (\bm{x}) = \frac{1}{Z(\Phi)} \exp \sum_{c \in \mathcal{C}}\phi_c(\bm{x}).\]
@@ -156,7 +160,8 @@ where $\eta_{1s}^{node} \vcentcolon = \Theta_s + 2 \Phi_{-s}\sqrt{x_{-si}}$ and 
 
 \begin{figure}\label{fig:conditionals}
 \includegraphics[width=\textwidth]{fig2condish}
-\caption{The figure on the left shows selected node conditionals of a SRM bivariate exponential distribution.  The two figures on the right are the densities of exponential and Poisson node conditionals}
+\caption{The figure on the left shows selected node conditionals of a SRM bivariate exponential distribution.  The two figures on the right are the densities of exponential and Poisson node conditionals\vmadd{.} 
+\vmcomment{Fonts in the plots are too small.}}
 \end{figure}
 \subsection{Normalizability of Square Root Graphical Models}
 
@@ -177,30 +182,28 @@ Since $\mathcal{V}$ is bounded and $\exp$ and $\log$ are continuous, $A$ is fini
  \begin{align*}
  A^{rad}(\Theta, \Phi) \vcentcolon & = \int_{\mathcal{Z}(\mathcal{V})} \Theta^T \sqrt{T(z \bm{v})} +  \sqrt{T(z \bm{v})} \Phi \sqrt{T(z \bm{v})} + \sum_{s=1}^p B(zv_s) d\mu(z)\\
  &= \int_{\mathcal{Z}(\mathcal{V})}  (\Theta^T \sqrt{\bm{v}}) \sqrt{z} +  (\sqrt{\bm{v}^T} \Phi \sqrt{\bm{v}})z  + \sum_{s=1}^p B(zv_s)d\mu(z)\\
-&= \int_{\mathcal{Z}(\mathcal{V})} \eta_{1}^{rad} \sqrt{z} + \eta_{2}^{rad} z + \sum_{s=1}^p B(x_s) d\mu(z) < \infty,  \\ 
+&= \int_{\mathcal{Z}(\mathcal{V})} \eta_{1}^{rad} \sqrt{z} + \eta_{2}^{rad} z + \sum_{s=1}^p B(x_s) d\mu(z) < \infty, 
 \end{align*}
 where $T(x) = x$ is assumed, and $\eta_{1}^{rad} = \Theta^T \sqrt{\bm{v}}$,  $\eta_{2}^{rad} = \sqrt{\bm{v}^T} \Phi \sqrt{\bm{v}}$.  This is the case if 
  if $\eta_2 < 0$ or $\eta_2 = 0$, and $\eta_1 \leq 0$.  Note that this general condition is weaker than negative definiteness, since $\bm{v}$ is assumed to lie in the positive orthant, but nevertheless requires that the diagonals of $\Phi \leq 0$.  However, this is not required for distributions such as the SRM whose univariate conditionals have Poisson domains and tails.  This is because the Poisson base measure $B_{\textit{pois}}(x) = - \log (x!)$ is decreasing.  In particular, $\lim_{x \to \infty} \log \frac{1}{x!} < x^{-1}.$  Thus, $\Phi$ can have arbitrary positive values in the SRM-Poisson distribution, even on its diagonals.  This is important, since the natural parameter space of the Poisson distribution is $\mathbb{R}$, and otherwise we could not model a proper joint distribution of independent Poisson random variables using this method.
 
 \subsection{Selection of Model Parameters} \label{Optimization}
 
-The consistency of M-estimators for estimating model parameters was studied by \citep{Yang2013-wa} for the previous exponential family MRF model.  The authors assume that it is applicable throughout, and use l1-penalized proximal gradient to optimize model parameters $\Phi$ and $\Theta$ given data $\mathbb{X} \in \mathbb{R}^{n\times p}$ containing $n$ observations of $p$ variables.  As a substitute for the joint likelihood, we solve the convex penalized pseudolikelihood minimization problem
+The consistency of M-estimators for estimating model parameters was studied by \citet{Yang2013-wa} for the previous exponential family MRF model.  The authors assume that it is applicable throughout, and use l1-penalized proximal gradient to optimize model parameters $\Phi$ and $\Theta$ given data $\mathbb{X} \in \mathbb{R}^{n\times p}$ containing $n$ observations of $p$ variables.  As a substitute for the joint likelihood, we solve the convex penalized pseudolikelihood minimization problem
 \begin{align}
  \argmin_{\Theta, \Phi} \sum_{s = 1}^{p} (-\frac{1}{n} \sum_{i = n}^n (\eta_{1si} \sqrt{x_{si}} + \eta_{2si} x_{si} - A_{node} ( \eta_{1si}, \eta_{2si} )) + \lambda\| \Phi_{s,-s} \|_1).
  \end{align}
 Here, $\eta_{1si} = \Theta_s + 2 \Phi_{-s}\sqrt{x_{-si}}$ and $\eta_{2si} = \Phi_{ss}$, $i \in \{1,\dotsc, n\}$.  The optimization algorithm first proposes new values of $\Phi_{s,}$ and $\Theta_s$ which increase the likelihood.  These are identified through a series of gradient calculations.  
-
 \begin{align*}
 \frac{dO}{d\phi_{ss}} &= \frac{-1}{n} \sum_{i=1}^{n} x_{si} - \frac{dA_{node}}{d\eta_2}, \\
 \frac{dO}{d\phi_{-s}} &= \frac{-2}{n} \sqrt{\mathbb{X}_{-s}}^T \sqrt{\mathbb{X}_s} - 2 \sqrt{\mathbb{X}_{-s}} \frac{dA_{node}}{d\eta_1}\, \quad \text{and}  \\
 \frac{dO}{d\theta_{s}} &= \frac{-1}{n} \sum_{i=1}^{n} \sqrt{x_{si}} - \frac{dA_{node}}{d\eta_1} \\
 \frac{dA_{node}}{d\eta1} &= \frac{(A_{node}((\eta_1 + \epsilon), \eta_2) - A_{node}((\eta_1 , \eta_2)))}{\epsilon} \text{and} \\
-\frac{dA_{node}}{d\eta_2} &= \frac{(A_{node}(\eta_1 , \eta_2+ \epsilon) - A_{node}((\eta_1 , \eta_2)))}{\epsilon} \\ 
+\frac{dA_{node}}{d\eta_2} &= \frac{(A_{node}(\eta_1 , \eta_2+ \epsilon) - A_{node}((\eta_1 , \eta_2)))}{\epsilon}
 \end{align*}
 In general, $A_{node}$ is easy to approximate since it is an integral over only one dimension. However, in the case that univariate conditionals are, exponential it has the analytic solution
 \[A_{node} (\eta_1, \eta_2) = \sqrt{\pi}  \eta_1 \frac{\exp{ ( \frac{\eta_1^2}{-4\eta_2} ) }} { (2(-\eta_2)^{1.5})} (1 - \erf{(\frac{-\eta_1}{2 \sqrt{ -\eta_2}}}))  + \frac{1}{-\eta_2}.\]
 The authors suggest $\epsilon = 0.0001$.
-
 After the off-diagonal values of each proposed $\Phi$ are soft-thresholded using the proximal operator $ST(\Phi_{off}) = \sgn{ (\Phi_{s,-s} )} (\Phi_{s,-s} - \lambda)_+$, the penalized univariate-conditional probability of the move is computed, and significant improvements are accepted.  After each computation of the gradient, large jumps are proposed, and if these are rejected, smaller jumps are considered.  Note that parallelization of the minimization problem eliminates a computationally intractable application of the chain rule, and generates two estimates of every off-diagonal element of $\Phi$, of which we take the average.
 
 \subsection{Estimation of Normalization Constant}
@@ -252,6 +255,8 @@ While MRF decompositions have guaranteed consistent neighborhood recovery and le
 As an alternative to joint likelihood-based model selection, a strategy which assess model fit non-parametrically or only on univariate conditionals may be used.  These avoid computation of the troublesome normalizing constant.  Interestingly, in certain cases from math and physics, there exist tractable ways of deriving this constant from subtle properties of the base graph.   While pleasingly general analytic solutions for this constant seem somewhat hopeless given the large number of potential cliques in a high-dimensional graph, these methods may help us to understand the trade off between complexity of a MRF's graph structure, and the complexity of its univariate conditionals.
 
 Finally, note that since exponential families are the only distributions which have sufficient statistics of fixed size, distributions outside this class are less amenable to multivariate generalizations, since the number of terms governing the interactions between these statistics can grow with the data.  In this way, univariate exponential families are appealing as univariate conditionals of multivariate probability measures.  That these univariate families are multiparameter distributions of a potentially novel nature is necessitated by the conditions of an MRF.
+ 
+ \vmcomment{Clean up your references and don't forget to protect your capitalization, e.g., Poisson, not poisson.}
  
   \bibliography{samkoelleprelimworking}
    \end{document}
